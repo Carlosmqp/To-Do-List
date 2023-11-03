@@ -4,11 +4,13 @@ import { API_URL } from '@/data/env';
 
 function App() {
   return (
+
     <Routes>
       <Route path="/dashboard/*" element={<Dashboard />} />
       <Route path="/auth/*" element={<Auth />} />
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
     </Routes>
+
   );
 }
 

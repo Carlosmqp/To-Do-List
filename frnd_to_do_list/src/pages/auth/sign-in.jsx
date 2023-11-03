@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { API_URL } from "@/data/env";
-import { useEffect,useState } from "react";
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { Dashboard, Auth } from "@/layouts";
 import {
   Card,
   CardHeader,
@@ -16,8 +17,10 @@ import {
 export function SignIn() {
 
 
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  // const [formData, setFormData] = useState({ email: "", password: "" });
 
   const [emailField,setEmailField] = useState('');
   const [passwordField,setPasswordField] = useState('');
@@ -32,6 +35,7 @@ export function SignIn() {
       formData.append('password', passwordField);
 
 
+
       const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         // headers: {
@@ -40,16 +44,33 @@ export function SignIn() {
         body: formData
     });
 
+      const result =  await response.json();
+      // console.log(result.authorisation.token);
 
-      console.log(response);
 
-      // const response = await axios.post(loginUrl, formData);
-      // const token = response.data.token;
 
-      // Almacena el token en el almacenamiento local o en cookies
-      // localStorage.setItem('token', token);
 
-      // history.push('./dashboar/home');
+
+      if(result.status == 'error'){
+
+
+      }else if(result.status == 'success') {
+        const token = result.authorisation.token;
+        const userInfo = result.user;
+        // permite crear una nueva variable local
+        localStorage.setItem('token', token);
+        localStorage.setItem('userInfo', userInfo);
+        navigate('/dashboard/home');
+      }
+
+
+
+      // esta funcion permite eliminar una variable local previamente creada
+      // localStorage.removeItem();
+
+      // permite obtener alguna variable local previamente creada
+      // localStorage.getItem('');
+
     } catch (error) {
       console.error(error);
     }
@@ -77,18 +98,23 @@ export function SignIn() {
             <Input type="email" label="Email" size="lg" value={emailField} onChange={(event) => setEmailField(event.target.value)}/>
             <Input type="password" label="Password" size="lg" value={passwordField} onChange={(event) => setPasswordField(event.target.value)}/>
             <div className="-ml-2.5">
-              <Checkbox label="Remember Me" />
+              <Checkbox label="Remember Me"/>
             </div>
           </CardBody>
           <CardFooter className="pt-0">
-            <Button 
-            onClick= {() => { handleSignIn()}} 
+            
+ 
+            <Button
+            onClick={() => { handleSignIn()}}
             type="submit"
             variant="gradient" 
             color="gray" 
             fullWidth>
               Sign In
             </Button>
+        
+
+
             <Typography variant="small" className="mt-6 flex justify-center">
               Don't have an account?
               <Link to="/auth/sign-up">
