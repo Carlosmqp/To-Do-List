@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('etiquetas', function (Blueprint $table) {
+        Schema::create('estado', function (Blueprint $table) {
             $table->id();
-            $table->string('etiqueta');
-            $table->integer('tarea_id');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('nombre');
         });
     }
 
@@ -25,7 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('etiquetas');
-
+        Schema::dropIfExists('estado');
     }
 };

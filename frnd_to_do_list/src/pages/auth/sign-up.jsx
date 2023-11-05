@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { API_URL } from "@/data/env";
-import { useEffect,useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -14,17 +14,63 @@ import {
 } from "@material-tailwind/react";
 
 export function SignUp() {
-  const loginUrl = `${API_URL}/login`;
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
-  const handleSignIn = async () => {
+
+  // const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const [nameField,setNameField] = useState('');
+  const [emailField,setEmailField] = useState('');
+  const [passwordField,setPasswordField] = useState('');
+
+
+  const handleSignUp = async () => {
     try {
-      const response = await axios.post(loginUrl, formData);
-      const token = response.data.token;
 
-      localStorage.setItem('token', token);
-      // Almacena el token en el almacenamiento local o en cookies
+      const formData = new FormData();
+
+      formData.append('name', nameField);
+      formData.append('email', emailField);
+      formData.append('password', passwordField);
+
+
+
+      const response = await fetch(`${API_URL}/register`, {
+        method: 'POST',
+        // headers: {
+        //     Authorization: `Bearer ${token}`,
+        // },
+        body: formData
+    });
+
+      const result =  await response.json();
+      // console.log(result.authorisation.token);
+
+
+
+
+
+      if(result.status == 'error'){
+
+
+      }else if(result.status == 'success') {
+        const token = result.authorisation.token;
+        const userInfo = result.user;
+        // permite crear una nueva variable local
+        localStorage.setItem('token', token);
+        localStorage.setItem('userInfo', userInfo);
+        navigate('/auth/sign-in');
+      }
+
+
+
+      // esta funcion permite eliminar una variable local previamente creada
+      // localStorage.removeItem();
+
+      // permite obtener alguna variable local previamente creada
+      // localStorage.getItem('');
+
     } catch (error) {
       console.error(error);
     }
@@ -51,15 +97,19 @@ export function SignUp() {
             </Typography>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
-            <Input label="Name" size="lg" />
-            <Input type="email" label="Email" size="lg" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}/>
-            <Input type="password" label="Password" size="lg" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })}/>
+            <Input label="Name" size="lg" value={nameField} onChange={(event) => setNameField(event.target.value)}/>
+            <Input type="email" label="Email" size="lg" value={emailField} onChange={(event) => setEmailField(event.target.value)}/>
+            <Input type="password" label="Password" size="lg" value={passwordField} onChange={(event) => setPasswordField(event.target.value)}/>
             <div className="-ml-2.5">
               <Checkbox label="I agree the Terms and Conditions" />
             </div>
           </CardBody>
           <CardFooter className="pt-0">
-            <Button onPress={handleSignIn} variant="gradient" color="gray" fullWidth>
+            <Button 
+            onClick={() => { handleSignUp()}}
+            variant="gradient" 
+            color="gray" 
+            fullWidth>
               Sign Up
             </Button>
             <Typography variant="small" className="mt-6 flex justify-center">
