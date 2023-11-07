@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use App\Models\Tareas;
 // use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
@@ -62,6 +63,12 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    // Definición de la relación uno a muchos con el modelo Tareas
+    public function tareas()
+    {
+        return $this->hasMany(Tareas::class, 'asignado_a');
     }
 
 }

@@ -47,14 +47,26 @@ export function SignUp() {
       const result =  await response.json();
       // console.log(result.authorisation.token);
 
-
-
-
-
       if(result.status == 'error'){
 
+      Swal.fire({
+        title:'Error',
+        text:'Usuario o Contraseña incorrectos',
+        icon:'error',
+        button: 'Cerrar',
+        timer:'3000'
+      });
 
       }else if(result.status == 'success') {
+
+        Swal.fire({
+          title:'Correcto',
+          text:'Logueado correctamente.',
+          icon:'sucess',
+          button: 'Cerrar',
+          timer:'3000'
+        });
+
         const token = result.authorisation.token;
         const userInfo = result.user;
         // permite crear una nueva variable local

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { API_URL } from "@/data/env";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { Dashboard, Auth } from "@/layouts";
 import {
   Card,
@@ -16,15 +17,12 @@ import {
 
 export function SignIn() {
 
-
   const navigate = useNavigate();
-
 
   // const [formData, setFormData] = useState({ email: "", password: "" });
 
   const [emailField,setEmailField] = useState('');
   const [passwordField,setPasswordField] = useState('');
-
 
   const handleSignIn = async () => {
     try {
@@ -33,8 +31,6 @@ export function SignIn() {
 
       formData.append('email', emailField);
       formData.append('password', passwordField);
-
-
 
       const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
@@ -47,23 +43,34 @@ export function SignIn() {
       const result =  await response.json();
       // console.log(result.authorisation.token);
 
-
-
-
-
       if(result.status == 'error'){
 
+        Swal.fire({
+          title:'Error',
+          text:'Usuario o Contraseña incorrectos',
+          icon:'error',
+          button: 'Cerrar',
+          timer:'3000'
+        });
 
       }else if(result.status == 'success') {
+
+        Swal.fire({
+          title:'Correcto',
+          text:'Logueado correctamente.',
+          icon:'sucess',
+          button: 'Cerrar',
+          timer:'3000'
+        });
+
         const token = result.authorisation.token;
         const userInfo = result.user;
         // permite crear una nueva variable local
         localStorage.setItem('token', token);
         localStorage.setItem('userInfo', userInfo);
         navigate('/dashboard/home');
+        
       }
-
-
 
       // esta funcion permite eliminar una variable local previamente creada
       // localStorage.removeItem();
