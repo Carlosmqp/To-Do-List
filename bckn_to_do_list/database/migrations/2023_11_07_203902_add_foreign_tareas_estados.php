@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('estado', function (Blueprint $table) {
-            $table->foreign('tarea_id')
+        Schema::table('tareas', function (Blueprint $table) {
+            $table->foreign('estado')
             ->references('id')
-            ->on('tareas')
+            ->on('estado')
             ->onUpdate('cascade');
         });
     }
@@ -24,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('estado', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

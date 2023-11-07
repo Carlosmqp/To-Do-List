@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::create('etiquetas', function (Blueprint $table) {
             $table->id();
-            $table->string('etiqueta');
-            $table->integer('tarea_id');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('nombre');
         });
     }
 

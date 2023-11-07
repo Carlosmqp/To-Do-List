@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('tarea_id');
             $table->integer('usuario_id');
-            $table->rememberToken();
             $table->timestamps();
         });
     }
