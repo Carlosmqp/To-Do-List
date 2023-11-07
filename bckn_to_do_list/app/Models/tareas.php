@@ -23,11 +23,11 @@ class Tareas extends Authenticatable implements JWTSubject
     protected $fillable = [
         'titulo',
         'descripcion',
-        'estado',
+        // 'estado',
         'fecha_creacion',
         'fecha_vencimiento',
-        'asignado_a',
-        'cod_etiquetas',
+        // 'asignado_a',
+        // 'cod_etiquetas',
     ];
 
     protected $casts = [

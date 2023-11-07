@@ -115,7 +115,7 @@ export function Home() {
             />
           ))}
         </div>
-        <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <div className="mb-4 grid grid-cols-2 gap-6 xl:grid-cols-1">
           <Card className="overflow-hidden xl:col-span-2">
             <CardHeader
               floated={false}
@@ -247,7 +247,7 @@ export function Home() {
               </table>
             </CardBody>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader
               floated={false}
               shadow={false}
@@ -261,11 +261,11 @@ export function Home() {
                 variant="small"
                 className="flex items-center gap-1 font-normal text-blue-gray-600"
               >
-                {/* <ArrowUpIcon
+                <ArrowUpIcon
                   strokeWidth={3}
                   className="h-3.5 w-3.5 text-green-500"
-                /> */}
-                {/* <strong>24%</strong> this month */}
+                />
+                <strong>24%</strong> this month
               </Typography>
             </CardHeader>
             <CardBody className="pt-0">
@@ -303,7 +303,7 @@ export function Home() {
                 )
               )}
             </CardBody>
-          </Card>
+          </Card> */}
         </div>
       </div>
     );

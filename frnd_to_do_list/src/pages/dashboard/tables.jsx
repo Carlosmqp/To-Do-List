@@ -74,12 +74,8 @@ export function Tables() {
 
   };
 
-
-
-
-
   return (
-    
+
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
         <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
@@ -146,7 +142,7 @@ export function Tables() {
                 name="nombre"
                 required
                 className="ml-2 mb-4 w-80 h-10 px-2 rounded-md border-2 border-x-blue-gray-800"
-                value={etiquetaField} onChange={(event) => setEtiquetaField(event.target.value)}
+                // value={etiquetaField} onChange={(event) => setEtiquetaField(event.target.value)}
               />
             </div>
 
@@ -164,7 +160,7 @@ export function Tables() {
             <button
               type="submit"
               className=" h-8 w-20 rounded-md bg-blue-600 text-gray-50"
-              onClick={() => { handleWork()}}
+              onClick={() => {handleWork()}}
             >
               Save
             </button>

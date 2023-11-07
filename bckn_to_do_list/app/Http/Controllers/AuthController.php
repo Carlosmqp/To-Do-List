@@ -12,7 +12,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login','register','tareas']]);
     }
 
     public function login(Request $request)
@@ -130,7 +130,7 @@ class AuthController extends Controller
         Auth::tareas();
         return response()->json([
             'status' => 'success',
-            'message' => 'Successfully logged out',
+            'message' => 'Successfully',
         ]);
     }
 
