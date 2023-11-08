@@ -7,7 +7,7 @@ import {
   CardBody,
   Typography,
   Avatar,
-  Chip,
+  Button,
   Tooltip,
   Progress,
 } from "@material-tailwind/react";
@@ -21,6 +21,7 @@ export function Tables() {
   const [fechaCField,setFechaCField] = useState('');
   const [fechaVField,setFechaVField] = useState('');
   const [etiquetaField,setEtiquetaField] = useState('');
+  const [estadoField,setEstadoField] = useState('');
 
   const handleWork = async () => {
 
@@ -30,17 +31,29 @@ export function Tables() {
 
       formData.append('titulo', tituloField);
       formData.append('descripcion', descripcionField);
-      formData.append('fechaC', fechaCField);
-      formData.append('fechaV', fechaVField);
-      // formData.append('etiqueta', etiquetaField);
+      formData.append('fecha_creacion', fechaCField);
+      formData.append('fecha_vencimiento', fechaVField);
+      formData.append('etiquetas', etiquetaField);
+      formData.append('estado', estadoField);
+      
+      let token = localStorage.getItem('token');  
+      let userInfo = localStorage.getItem('userInfo'); 
+      
+      let user = userInfo.id;
 
-      const response = await fetch(`${API_URL}/tareas`, {
+      console.log(userInfo);
+
+      formData.append('asignado_a', user);
+
+      const response = await fetch(`${API_URL}/createHomework`, {
         method: 'POST',
-        // headers: {
-        //     Authorization: `Bearer ${token}`,
-        // },
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
         body: formData
     });
+
+    
 
     const result =  await response.json();
 
@@ -49,20 +62,20 @@ export function Tables() {
 
       Swal.fire({
         title:'Error',
-        text:'Usuario o Contraseña incorrectos',
+        text:'Los campos no pueden estar vacios',
         icon:'error',
         button: 'Cerrar',
-        timer:'3000'
+        timer:'2500'
       });
 
     }else if(result.status == 'success') {
 
       Swal.fire({
         title:'Correcto',
-        text:'Logueado correctamente.',
+        text:'Creado correctamente',
         icon:'sucess',
         button: 'Cerrar',
-        timer:'3000'
+        timer:'2500'
       });
     }
 
@@ -77,7 +90,7 @@ export function Tables() {
   return (
 
     <div className="mt-12 mb-8 flex flex-col gap-12">
-      <Card>
+      <Card className="px-5">
         <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
           <Typography variant="h6" color="white">
             Homeworks
@@ -86,17 +99,17 @@ export function Tables() {
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           {/* <form action="#" method="post" className="ml-5"> */}
             <div>
-              <label for="nombre">Name of homework:</label>
+              <label for="nombre" className=" mr-[6%]">Title:</label>
               <input
                 type="text"
                 id="nombre"
                 name="nombre"
                 required
-                className="ml-2  mb-4 w-96 h-10 px-2 rounded-md border-2 border-x-blue-gray-800"
+                className="ml-2  mb-4 w-96 h-10 px-2 focus:outline-none border-blue-400/75 rounded-md border-2 border-x-blue-gray-800"
                 value={tituloField} onChange={(event) => setTituloField(event.target.value)}
               />
 
-              <label for="fecha" className="ml-5">
+              <label for="fecha" className="ml-[2%]">
                 Start Date:
               </label>
               <input
@@ -104,47 +117,54 @@ export function Tables() {
                 id="fecha"
                 name="fecha"
                 required
-                className="ml-2 mb-4 w-48 rounded-md border-2 border-x-blue-gray-800 py-1 px-2"
+                className="ml-2 mb-4 w-48 rounded-md focus:outline-none border-2 border-blue-400/75 border-x-blue-gray-800 py-1 px-2"
                 value={fechaCField} onChange={(event) => setFechaCField(event.target.value)}
               />
             </div>
             <div>
-              <label for="fecha" className="ml-[556px]">
-                FInal Date:
+              <label for="fecha" className="ml-[56%]">
+                Final Date:
               </label>
               <input
                 type="date"
                 id="fecha"
                 name="fecha"
                 required
-                className="ml-2 mb-4 w-48 rounded-md border-2 border-x-blue-gray-800 py-1 px-2"
+                className="ml-2 mb-4 w-48 rounded-md focus:outline-none border-2 border-blue-400/75 border-x-blue-gray-800 py-1 px-2"
                 value={fechaVField} onChange={(event) => setFechaVField(event.target.value)}
               />
             </div>
             <div className="flex">
               
-              <label for="descripcion">Homework:</label>
+              <label for="descripcion">Description:</label>
               <div>
                 <textarea
                   id="descripcion"
                   name="descripcion"
                   rows="4"
                   required
-                  className="ml-2 mb-4 w-96 rounded-md border-2 border-x-blue-gray-800 pl-2"
+                  className="ml-2 mb-4 w-96 rounded-md focus:outline-none border-2 border-blue-400/75 border-x-blue-gray-800 pl-2 pt-2"
                   value={descripcionField} onChange={(event) => setDescripcionField(event.target.value)}
                 ></textarea>
               </div>
 
-              <label for="nombre" className="ml-5">Etiqueta:</label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                required
-                className="ml-2 mb-4 w-80 h-10 px-2 rounded-md border-2 border-x-blue-gray-800"
-                // value={etiquetaField} onChange={(event) => setEtiquetaField(event.target.value)}
-              />
+              <label for="nombre" className="ml-5">Tag:</label>
+              <select name="" id="" className=" w-64 h-10 ml-5 rounded-md px-3 focus:outline-none bg-white border-2 border-blue-400/75 border-x-blue-gray-800"
+              value={etiquetaField} onChange={(event) => setEtiquetaField(event.target.value)}>
+                <option value="">Choose an option</option>
+                <option value="1">Required</option>
+                <option value="2">Optional</option>
+              </select>
+
+            <label for="nombre" className="ml-5">Tag:</label>
+              <select name="" id="" className=" w-64 h-10 ml-5 rounded-md px-3 focus:outline-none bg-white border-2 border-blue-400/75 border-x-blue-gray-800"
+              value={estadoField} onChange={(event) => setEstadoField(event.target.value)}>
+                <option value="">Choose an option</option>
+                <option value="1">Option1</option>
+                <option value="2">Option2</option>
+              </select>
             </div>
+
 
             {/* <div>
               <label for="imagen">upload image (if is necesary):</label>
@@ -157,13 +177,13 @@ export function Tables() {
               />
             </div> */}
 
-            <button
+            <Button
               type="submit"
-              className=" h-8 w-20 rounded-md bg-blue-600 text-gray-50"
+              className=" h-10 w-35 ml-2 rounded-md bg-blue-600 text-gray-50"
               onClick={() => {handleWork()}}
             >
               Save
-            </button>
+            </Button>
           {/* </form> */}
         </CardBody>
       </Card>
