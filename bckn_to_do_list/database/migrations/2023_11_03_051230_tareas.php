@@ -17,11 +17,10 @@ return new class extends Migration
             $table->string('descripcion');
             $table->integer('estado');
             $table->date('fecha_creacion');
-            $table->date('fecha_vencimiento');
+            $table->date('fecha_vencimiento')->nullable();
             $table->integer('asignado_a');
-            $table->integer('cod_prioridad');
-            $table->integer('cod_etiquetas');
-            $table->rememberToken();
+            $table->integer('cod_prioridad')->nullable();
+            $table->integer('etiquetas')->nullable();
             $table->timestamps();
         });
     }
