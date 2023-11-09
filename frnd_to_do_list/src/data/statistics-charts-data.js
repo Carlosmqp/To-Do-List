@@ -62,36 +62,34 @@ const dailySalesChart = {
 
 const completedTasksChart = {
   ...dailySalesChart,
-  // series: [
-  //   {
-  //     name: "Tasks",
-  //     data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-  //   },
-  // ],
+  series: [
+    {
+      name: "Tasks",
+      data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+    },
+  ],
 };
 
 export const statisticsChartsData = [
   {
-    color: "blue",
-    title: "Tareas Completa",
-    description: "",
-    footer: "just updated",
+    color: "green",
+    description: "These are the completed tasks.",
+    footer: "",
     chart: websiteViewsChart,
   },
   {
     color: "red",
-    title: "Tareas Por Cumplir",
-    description: "",
-    footer: "updated 4 min ago",
+    description: "These are the pending tasks.",
+    footer: "",
     chart: dailySalesChart,
   },
-  {
-    color: "green",
-    title: "Opcion 3",
-    description: "",
-    footer: "just updated",
-    chart: completedTasksChart,
-  },
+  // {
+  //   color: "green",
+  //   title: "Opcion 3",
+  //   description: "",
+  //   footer: "just updated",
+  //   chart: completedTasksChart,
+  // },
 ];
 
 export default statisticsChartsData;

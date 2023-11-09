@@ -65,9 +65,12 @@ export function SignIn() {
 
         const token = result.authorisation.token;
         const userInfo = result.user;
+
+        const userInfoJson = JSON.stringify(userInfo);
+
         // permite crear una nueva variable local
-        localStorage.setItem('token', token);
-        localStorage.setItem('userInfo', userInfo);
+         localStorage.setItem('token', token);
+        localStorage.setItem('userInfo', userInfoJson);
         navigate('/dashboard/home');
         
       }
@@ -104,9 +107,9 @@ export function SignIn() {
           <CardBody className="flex flex-col gap-4">
             <Input type="email" label="Email" size="lg" value={emailField} onChange={(event) => setEmailField(event.target.value)}/>
             <Input type="password" label="Password" size="lg" value={passwordField} onChange={(event) => setPasswordField(event.target.value)}/>
-            <div className="-ml-2.5">
+            {/* <div className="-ml-2.5">
               <Checkbox label="Remember Me"/>
-            </div>
+            </div> */}
           </CardBody>
           <CardFooter className="pt-0">
             

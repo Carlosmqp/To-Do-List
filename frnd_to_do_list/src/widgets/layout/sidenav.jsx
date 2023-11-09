@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   Avatar,
@@ -17,6 +17,13 @@ export function Sidenav({ brandImg, brandName, routes }) {
     white: "bg-white shadow-lg",
     transparent: "bg-transparent",
   };
+
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+  }
 
   return (
     <aside
@@ -64,6 +71,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
               </li>
             )}
             {pages.map(({ icon, name, path }) => (
+
+              name != 'sign up' &&
               <li key={name}>
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
@@ -81,6 +90,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                     >
                       {icon}
                       <Typography
+                        onClick={() => { (name == 'Sign Out')? handleSignOut() : null }}
                         color="inherit"
                         className="font-medium capitalize"
                       >

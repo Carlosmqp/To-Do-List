@@ -31,7 +31,7 @@ export const routes = [
       },
       {
         icon: <TableCellsIcon {...icon} />,
-        name: "Tareas",
+        name: "Tasks",
         path: "/tables",
         element: <Tables />,
       },
@@ -49,7 +49,7 @@ export const routes = [
     pages: [
       {
         icon: <ArrowRightOnRectangleIcon {...icon} />,
-        name: "sign in",
+        name: "sign Out",
         path: "/sign-in",
         element: <SignIn />,
       },

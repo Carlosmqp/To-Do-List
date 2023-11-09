@@ -36,38 +36,57 @@ import { useNavigate } from 'react-router-dom';
 
 export function Home() {
 
+  const [token, setToken] = useState("");
+  const [homerwoksInfo, setHomeworksInfo] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [countCompleted, setCountCompleted] = useState(0);
+  const [countPending, setCountPending] = useState(0);
   const [home, setHome] = useState(false);
   const navigate = useNavigate();
+
+
+
+
 
 
    useEffect(() => {
     const handleToken = async () => {
 
     const token = localStorage.getItem("token"); // Obtén el token del almacenamiento local
-    console.log(token);
+    // console.log(token);
     if(token == '' || token == null){
       localStorage.removeItem("token");
       localStorage.removeItem("userInfo");
       navigate('/auth/sign-in');
       return;
     }
+
+
+    try {
       const response = await fetch(`${API_URL}/me`, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-      const result =  await response.json();
+          method: 'GET',
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
+        const result =  await response.json();
+        
+        if(result.status == 'success'){
+            setUserData(result.user);
+            setHome(true);
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userInfo");
+          navigate('/auth/sign-in');
+        }
       
-      if(result.status == 'success'){
-          setUserData(result.user);
-          setHome(true);
-      } else {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userInfo");
-        navigate('/auth/sign-in');
-      }
+    } catch (error) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userInfo");
+      navigate('/auth/sign-in');
+    }
+
+
     };
 
     handleToken();
@@ -77,44 +96,86 @@ export function Home() {
   }, []);
 
 
+  useEffect(() => {
+    if (
+      localStorage.getItem("token") !== undefined &&
+      localStorage.getItem("token") != null
+    ) {
+      setToken(localStorage.getItem("token"));
+      setUserData(JSON.parse(localStorage.getItem("userInfo")));
+    }
+  }, []);
+
+
+  const handleHomeworksData = async () => {
+    const response = await fetch(`${API_URL}/getHomeworks`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.status == "success") {
+      const newData = result.data.filter((data) => data.asignado_a == userData.id);
+
+
+      let countF = 0;
+      let countP = 0;
+
+      // console.log(result);
+      // console.log(userData);
+
+      for (let i = 0; i < newData.length; i++) {
+        const element = newData[i];
+
+        if(element.estado == 1)
+          countP++;
+        else 
+          countF++;
+      }
+
+      setCountCompleted(countF);
+      setCountPending(countP);
+      setHomeworksInfo(result.data);
+    }
+  };
+
+
+
+  useEffect(() => {
+    if (token !== "" && token !== null) {
+      handleHomeworksData();
+    }
+  }, [token]);
+
+
+
+
   if(home == true){
     return (
       <div className="mt-12">
-        {/* <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
-          {statisticsCardsData.map(({ icon, title, footer, ...rest }) => (
-            <StatisticsCard
-              key={title}
-              {...rest}
-              title={title}
-              icon={React.createElement(icon, {
-                className: "w-6 h-6 text-white",
-              })}
-              footer={
-                <Typography className="font-normal text-blue-gray-600">
-                  <strong className={footer.color}>{footer.value}</strong>
-                  &nbsp;{footer.label}
-                </Typography>
-              }
-            />
-          ))}
-        </div> */}
-        <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
+
+        <div className="mb-6 grid grid-cols-1 gap-y-12 gap-x-6 md:grid-cols-2 xl:grid-cols-2">
           {statisticsChartsData.map((props) => (
             <StatisticsChart
               key={props.title}
-              {...props}
+              title={props.color == 'green'? `${countCompleted} Completed Tasks` : `${countPending} Pending Tasks`}
+              {...props}          
               footer={
                 <Typography
                   variant="small"
-                  className="flex items-center font-normal text-blue-gray-600"
-                >
-                  <ClockIcon strokeWidth={2} className="h-4 w-4 text-inherit" />
-                  &nbsp;{props.footer}
+                  className="flex items-center font-normal text-blue-gray-600">
                 </Typography>
               }
             />
           ))}
         </div>
+
+
+
+
         <div className="mb-4 grid grid-cols-2 gap-6 xl:grid-cols-1">
           <Card className="overflow-hidden xl:col-span-2">
             <CardHeader
@@ -125,40 +186,23 @@ export function Home() {
             >
               <div>
                 <Typography variant="h6" color="blue-gray" className="mb-1">
-                  Homework List
+                  Tasks List
                 </Typography>
                 <Typography
                   variant="small"
                   className="flex items-center gap-1 font-normal text-blue-gray-600"
                 >
                   <CheckIcon strokeWidth={3} className="h-4 w-4 text-blue-500" />
-                  <strong>6 homeworks</strong> this month
+                  <strong>{homerwoksInfo.length} Tasks</strong> this month
                 </Typography>
               </div>
-              <Menu placement="left-start">
-                <MenuHandler>
-                  <IconButton size="sm" variant="text" color="blue-gray">
-                    <EllipsisVerticalIcon
-                      strokeWidth={3}
-                      fill="currenColor"
-                      className="h-6 w-6"
-                    />
-                  </IconButton>
-                </MenuHandler>
-                <MenuList>
-                  <a href="/dashboard/tables">
-                    <MenuItem>Add homework</MenuItem>
-                  </a>
-                  {/* <MenuItem>Another Action</MenuItem>
-                  <MenuItem>Something else here</MenuItem> */}
-                </MenuList>
-              </Menu>
+              
             </CardHeader>
             <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
               <table className="w-full min-w-[640px] table-auto">
                 <thead>
                   <tr>
-                    {["homeworks", "see", "edit", "delete"].map((el) => (
+                    {["tasks"].map((el) => (
                       <th
                         key={el}
                         className="border-b border-blue-gray-50 py-3 px-6 text-left"
@@ -174,75 +218,98 @@ export function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {projectsTableData.map(
-                    ({ img, name, members, budget, completion }, key) => {
-                      const className = `py-3 px-5 ${
-                        key === projectsTableData.length - 1
-                          ? ""
-                          : "border-b border-blue-gray-50"
-                      }`;
-  
-                      return (
-                        <tr key={name}>
-                          <td className={className}>
-                            <div className="flex items-center gap-4">
-                              <Avatar src={img} alt={name} size="sm" />
-                              <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="font-bold"
-                              >
-                                {name}
-                              </Typography>
-                            </div>
-                          </td>
-                          <td className={className}>
-                            {members.map(({ img, name }, key) => (
-                              <Tooltip key={name} content={name}>
-                                <Avatar
-                                  src={img}
-                                  alt={name}
-                                  size="xs"
-                                  variant="circular"
-                                  className={`cursor-pointer border-2 border-white ${
-                                    key === 0 ? "" : "-ml-2.5"
-                                  }`}
-                                />
-                              </Tooltip>
-                            ))}
-                          </td>
-                          <td className={className}>
+
+                { homerwoksInfo.length > 0 && homerwoksInfo.map(
+                (row, key) => {
+                  const className = `py-3 px-5 ${
+                    key === projectsTableData.length - 1
+                      ? ""
+                      : "border-b border-blue-gray-50"
+                  }`;
+
+                  return (
+                    <tr key={row.id}>
+                      <td className={className}>
+                        <div className="flex items-center gap-4">
+                          <Avatar src="/img/logo.png" size="sm" />
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-bold"
+                          >
+                            {row.titulo}
+                          </Typography>
+                        </div>
+                      </td>
+
+                      {/* <td className={className}>
+                        <Tooltip>
+                          <Avatar
+                            src="/img/eye.png"
+                            alt="See"
+                            onClick={() => {
+                              handleOpenModal("view", row);
+                            }}
+                            size="xs"
+                            variant="circular"
+                            className={`cursor-pointer border-2 border-white`}
+                          />
+                        </Tooltip>
+                      </td> */}
+
+                      {/* <td className={className}>
+                        <button
+                          onClick={() => {
+                            handleOpenModal("edit", row);
+                          }}
+                        >
+                          <Typography
+                            variant="small"
+                            className="text-xs font-medium text-blue-gray-600"
+                          >
+                            <i className="fas fa-edit text-green-500" />
+                          </Typography>
+                        </button>
+                      </td> */}
+
+                      {/* <td className={className}>
+                        <div className="w-10/12">
+                          <button 
+                            onClick={() => {handleDeleteRow(row)}}
+                            >
+                            <Typography
+                              variant="small"
+                              className="mb-1 block text-xs font-medium text-blue-gray-600">
+                              <i className="fas fa-trash text-red-500" />
+                            </Typography>
+                          </button>
+                        </div>
+                      </td> */}
+                      {/* <td className={className}>
+                        <Menu placement="left-start">
+                          <MenuHandler>
                             <button>
-                              <Typography
-                                variant="small"
-                                className="text-xs font-medium text-blue-gray-600"
-                              >
-                                {budget}
-                              </Typography>
+                              <i className={`fas fa-hand-pointer text-xl ${row.estado == 1 ? 'text-blue-700' : 'text-green-700'}  `} />
                             </button>
-                          </td>
-                          <td className={className}>
-                            <div className="w-10/12">
-                              <button>
-                                <Typography
-                                  variant="small"
-                                  className="mb-1 block text-xs font-medium text-blue-gray-600"
-                                >
-                                  {completion}
-                                </Typography>
-                              </button>
-                              {/* <Progress
-                                value={completion}
-                                variant="gradient"
-                                color={completion === 100 ? "green" : "blue"}
-                                className="h-1"
-                              /> */}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
+                          </MenuHandler>
+                          <MenuList>
+                            <MenuItem onClick={() => {handleMarkAsDone(row)}}>Mark as completed</MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </td> */}
+                    </tr>
+                  );
+                }
+              )}
+
+              {homerwoksInfo.length === 0 &&
+                 <tr>
+                    <td className=" text-center p-4" colSpan={5}>No Tasks yet</td>
+                 </tr>
+              }
+
+
+
                 </tbody>
               </table>
             </CardBody>

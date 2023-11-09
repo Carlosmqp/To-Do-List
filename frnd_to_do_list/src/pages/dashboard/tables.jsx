@@ -1,6 +1,6 @@
 import { API_URL } from "@/data/env";
-import { useState } from "react";
-import Swal from 'sweetalert2';
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import {
   Card,
   CardHeader,
@@ -10,287 +10,228 @@ import {
   Button,
   Tooltip,
   Progress,
+  IconButton,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
 } from "@material-tailwind/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { authorsTableData, projectsTableData } from "@/data";
+import Modal from "@/widgets/cards/modal-homeworks";
 
 export function Tables() {
+  const [homerwoksInfo, setHomeworksInfo] = useState([]);
+  const [token, setToken] = useState("");
+  const [userInfo, setUserInfo] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalType, setModalType] = useState("");
+  const [rowInfo, setRowInfo] = useState(null);
 
-  const [tituloField,setTituloField] = useState('');
-  const [descripcionField,setDescripcionField] = useState('');
-  const [fechaCField,setFechaCField] = useState('');
-  const [fechaVField,setFechaVField] = useState('');
-  const [etiquetaField,setEtiquetaField] = useState('');
-  const [estadoField,setEstadoField] = useState('');
+  // const handleWork = async () => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("titulo", tituloField);
+  //     formData.append("descripcion", descripcionField);
+  //     formData.append("fecha_creacion", fechaCField);
+  //     formData.append("fecha_vencimiento", fechaVField);
+  //     formData.append("etiquetas", etiquetaField);
+  //     formData.append("estado", 1); // estado pendiente
 
-  const handleWork = async () => {
+  //     let user = userInfo.id;
 
-    try {
+  //     console.log(userInfo);
 
-      const formData = new FormData();
+  //     formData.append("asignado_a", user);
 
-      formData.append('titulo', tituloField);
-      formData.append('descripcion', descripcionField);
-      formData.append('fecha_creacion', fechaCField);
-      formData.append('fecha_vencimiento', fechaVField);
-      formData.append('etiquetas', etiquetaField);
-      formData.append('estado', estadoField);
-      
-      let token = localStorage.getItem('token');  
-      let userInfo = localStorage.getItem('userInfo'); 
-      
-      let user = userInfo.id;
+  //     const response = await fetch(`${API_URL}/createHomework`, {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: formData,
+  //     });
 
-      console.log(userInfo);
+  //     const result = await response.json();
 
-      formData.append('asignado_a', user);
+  //     if (result.status == "error") {
+  //       Swal.fire({
+  //         title: "Error",
+  //         text: "Ha ocurrido un error durante el guardado",
+  //         icon: "error",
+  //         button: "Cerrar",
+  //         timer: "2500",
+  //       });
+  //     } else if (result.status == "success") {
+  //       Swal.fire({
+  //         title: "Correcto",
+  //         text: "Creado correctamente",
+  //         icon: "sucess",
+  //         button: "Cerrar",
+  //         timer: "2500",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-      const response = await fetch(`${API_URL}/createHomework`, {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        body: formData
+  useEffect(() => {
+    if (
+      localStorage.getItem("token") !== undefined &&
+      localStorage.getItem("token") != null
+    ) {
+      setToken(localStorage.getItem("token"));
+      setUserInfo(JSON.parse(localStorage.getItem("userInfo")));
+    }
+  }, []);
+
+  const handleHomeworksData = async () => {
+    const response = await fetch(`${API_URL}/getHomeworks`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    
+    const result = await response.json();
 
-    const result =  await response.json();
-
-    
-    if(result.status == 'error'){
-
-      Swal.fire({
-        title:'Error',
-        text:'Los campos no pueden estar vacios',
-        icon:'error',
-        button: 'Cerrar',
-        timer:'2500'
-      });
-
-    }else if(result.status == 'success') {
-
-      Swal.fire({
-        title:'Correcto',
-        text:'Creado correctamente',
-        icon:'sucess',
-        button: 'Cerrar',
-        timer:'2500'
-      });
+    if (result.status == "success") {
+      const newData = result.data.filter((data) => data.asignado_a == userInfo.id);
+      setHomeworksInfo(result.data);
     }
+  };
 
-
+  useEffect(() => {
+    if (token !== "" && token !== null) {
+      handleHomeworksData();
     }
-    catch(error){
-      console.error(error);
+  }, [token]);
+
+
+  useEffect(() => {
+    handleHomeworksData();
+  },[isOpen]);
+
+
+
+  const handleOpenModal = (type, rowInfo) => {
+    setRowInfo(rowInfo);
+    setModalType(type);
+    setIsOpen(true);
+  };
+
+
+  const handleDeleteRow = async(row) => {
+
+    const response = await fetch(`${API_URL}/deleteHomework/${row.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.status == "error") {
+      Swal.fire({
+        title: "Error",
+        text: "Ha ocurrido un error al momento de eliminar",
+        icon: "error",
+        button: "Cerrar",
+        timer: "2500",
+      });
+    } else if (result.status == "success") {
+      Swal.fire({
+        title: "Correcto",
+        text: "Eliminado correctamente",
+        icon: "sucess",
+        button: "Cerrar",
+        timer: "2500",
+      });
+      handleHomeworksData();
+    }
+  };
+
+
+  const handleMarkAsDone = async(row) => {
+
+    const formData = new FormData();
+    formData.append("titulo", row.titulo);
+    formData.append("descripcion", row.descripcion);
+    formData.append("fecha_creacion", row.fecha_creacion);
+    formData.append("fecha_vencimiento", row.fecha_vencimiento);
+    formData.append("etiquetas", row.etiquetas);
+    formData.append("estado", 2); // finalizada
+
+    const response = await fetch(`${API_URL}/updateHomework/${row.id}?_method=PUT`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (result.status == "error") {
+      Swal.fire({
+        title: "Error",
+        text: "Ha ocurrido un error",
+        icon: "error",
+        button: "Cerrar",
+        timer: "2500",
+      });
+    } else if (result.status == "success") {
+      Swal.fire({
+        title: "Correcto",
+        text: "Tarea completada exitosamente",
+        icon: "sucess",
+        button: "Cerrar",
+        timer: "2500",
+      });
+      handleHomeworksData();
     }
 
   };
 
+
+
   return (
+    <div className="mb-8 flex flex-col gap-12">
+      <div>
+        <Modal
+          modalType={modalType}
+          token={token}
+          userInfo={userInfo}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          rowInfo={rowInfo}
+        />
+      </div>
 
-    <div className="mt-12 mb-8 flex flex-col gap-12">
-      <Card className="px-5">
-        <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
-          <Typography variant="h6" color="white">
-            Homeworks
-          </Typography>
-        </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          {/* <form action="#" method="post" className="ml-5"> */}
-            <div>
-              <label for="nombre" className=" mr-[6%]">Title:</label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                required
-                className="ml-2  mb-4 w-96 h-10 px-2 focus:outline-none border-blue-400/75 rounded-md border-2 border-x-blue-gray-800"
-                value={tituloField} onChange={(event) => setTituloField(event.target.value)}
-              />
-
-              <label for="fecha" className="ml-[2%]">
-                Start Date:
-              </label>
-              <input
-                type="date"
-                id="fecha"
-                name="fecha"
-                required
-                className="ml-2 mb-4 w-48 rounded-md focus:outline-none border-2 border-blue-400/75 border-x-blue-gray-800 py-1 px-2"
-                value={fechaCField} onChange={(event) => setFechaCField(event.target.value)}
-              />
-            </div>
-            <div>
-              <label for="fecha" className="ml-[56%]">
-                Final Date:
-              </label>
-              <input
-                type="date"
-                id="fecha"
-                name="fecha"
-                required
-                className="ml-2 mb-4 w-48 rounded-md focus:outline-none border-2 border-blue-400/75 border-x-blue-gray-800 py-1 px-2"
-                value={fechaVField} onChange={(event) => setFechaVField(event.target.value)}
-              />
-            </div>
-            <div className="flex">
-              
-              <label for="descripcion">Description:</label>
-              <div>
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  rows="4"
-                  required
-                  className="ml-2 mb-4 w-96 rounded-md focus:outline-none border-2 border-blue-400/75 border-x-blue-gray-800 pl-2 pt-2"
-                  value={descripcionField} onChange={(event) => setDescripcionField(event.target.value)}
-                ></textarea>
-              </div>
-
-              <label for="nombre" className="ml-5">Tag:</label>
-              <select name="" id="" className=" w-64 h-10 ml-5 rounded-md px-3 focus:outline-none bg-white border-2 border-blue-400/75 border-x-blue-gray-800"
-              value={etiquetaField} onChange={(event) => setEtiquetaField(event.target.value)}>
-                <option value="">Choose an option</option>
-                <option value="1">Required</option>
-                <option value="2">Optional</option>
-              </select>
-
-            <label for="nombre" className="ml-5">Tag:</label>
-              <select name="" id="" className=" w-64 h-10 ml-5 rounded-md px-3 focus:outline-none bg-white border-2 border-blue-400/75 border-x-blue-gray-800"
-              value={estadoField} onChange={(event) => setEstadoField(event.target.value)}>
-                <option value="">Choose an option</option>
-                <option value="1">Option1</option>
-                <option value="2">Option2</option>
-              </select>
-            </div>
-
-
-            {/* <div>
-              <label for="imagen">upload image (if is necesary):</label>
-              <input
-                type="file"
-                id="imagen"
-                name="imagen"
-                accept="image/*"
-                className="mb-4"
-              />
-            </div> */}
-
-            <Button
-              type="submit"
-              className=" h-10 w-35 ml-2 rounded-md bg-blue-600 text-gray-50"
-              onClick={() => {handleWork()}}
-            >
-              Save
-            </Button>
-          {/* </form> */}
-        </CardBody>
-      </Card>
-
-      {/* <Card>
-        <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
-          <Typography variant="h6" color="white">
-            Authors Table
-          </Typography>
-        </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
-            <thead>
-              <tr>
-                {["author", "function", "status", "employed", ""].map((el) => (
-                  <th
-                    key={el}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
-                  >
-                    <Typography
-                      variant="small"
-                      className="text-[11px] font-bold uppercase text-blue-gray-400"
-                    >
-                      {el}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {authorsTableData.map(
-                ({ img, name, email, job, online, date }, key) => {
-                  const className = `py-3 px-5 ${
-                    key === authorsTableData.length - 1
-                      ? ""
-                      : "border-b border-blue-gray-50"
-                  }`;
-
-                  return (
-                    <tr key={name}>
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          <Avatar src={img} alt={name} size="sm" />
-                          <div>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-semibold"
-                            >
-                              {name}
-                            </Typography>
-                            <Typography className="text-xs font-normal text-blue-gray-500">
-                              {email}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {job[0]}
-                        </Typography>
-                        <Typography className="text-xs font-normal text-blue-gray-500">
-                          {job[1]}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={online ? "green" : "blue-gray"}
-                          value={online ? "online" : "offline"}
-                          className="py-0.5 px-2 text-[11px] font-medium"
-                        />
-                      </td>
-                      <td className={className}>
-                        <Typography className="text-xs font-semibold text-blue-gray-600">
-                          {date}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          Edit
-                        </Typography>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody>
-          </table>
-        </CardBody>
-      </Card> */}
+      <div className="mb-8 flex h-14 justify-center">
+        <Button
+          onClick={() => {
+            handleOpenModal("save", null);
+          }}
+          className=" w-96 text-xl"
+        >
+          Create Task
+        </Button>
+      </div>
 
       <Card>
         <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
           <Typography variant="h6" color="white">
-            Homeworks Table
+            Tasks
           </Typography>
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["homework", "see", "edit", "delete", ""].map((el) => (
+                {["task", "see", "edit", "delete", "complete"].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -306,8 +247,9 @@ export function Tables() {
               </tr>
             </thead>
             <tbody>
-              {projectsTableData.map(
-                ({ img, name, members, budget, completion }, key) => {
+
+              { homerwoksInfo.length > 0 && homerwoksInfo.map(
+                (row, key) => {
                   const className = `py-3 px-5 ${
                     key === projectsTableData.length - 1
                       ? ""
@@ -315,78 +257,85 @@ export function Tables() {
                   }`;
 
                   return (
-                    <tr key={name}>
+                    <tr key={row.id}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
-                          <Avatar src={img} alt={name} size="sm" />
+                          <Avatar src="/img/logo.png" size="sm" />
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-bold"
                           >
-                            {name}
+                            {row.titulo}
                           </Typography>
                         </div>
                       </td>
+
                       <td className={className}>
-                        {members.map(({ img, name }, key) => (
-                          <Tooltip key={name} content={name}>
-                            <Avatar
-                              src={img}
-                              alt={name}
-                              size="xs"
-                              variant="circular"
-                              className={`cursor-pointer border-2 border-white ${
-                                key === 0 ? "" : "-ml-2.5"
-                              }`}
-                            />
-                          </Tooltip>
-                        ))}
+                        <Tooltip>
+                          <Avatar
+                            src="/img/eye.png"
+                            alt="See"
+                            onClick={() => {
+                              handleOpenModal("view", row);
+                            }}
+                            size="xs"
+                            variant="circular"
+                            className={`cursor-pointer border-2 border-white`}
+                          />
+                        </Tooltip>
                       </td>
+
                       <td className={className}>
-                        <button>
+                        <button
+                          onClick={() => {
+                            handleOpenModal("edit", row);
+                          }}
+                        >
                           <Typography
                             variant="small"
                             className="text-xs font-medium text-blue-gray-600"
                           >
-                            {budget}
+                            <i className="fas fa-edit text-green-500" />
                           </Typography>
                         </button>
                       </td>
+
                       <td className={className}>
                         <div className="w-10/12">
-                          <button>
+                          <button 
+                            onClick={() => {handleDeleteRow(row)}}
+                            >
                             <Typography
                               variant="small"
-                              className="mb-1 block text-xs font-medium text-blue-gray-600"
-                            >
-                              {completion}
+                              className="mb-1 block text-xs font-medium text-blue-gray-600">
+                              <i className="fas fa-trash text-red-500" />
                             </Typography>
                           </button>
-                          <Progress
-                            value={completion}
-                            variant="gradient"
-                            color={completion === 100 ? "green" : "blue"}
-                            className="h-1"
-                          />
                         </div>
                       </td>
                       <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          <EllipsisVerticalIcon
-                            strokeWidth={2}
-                            className="h-5 w-5 text-inherit"
-                          />
-                        </Typography>
+                        <Menu placement="left-start">
+                          <MenuHandler>
+                            <button>
+                              <i className={`fas fa-hand-pointer text-xl ${row.estado == 1 ? 'text-blue-700' : 'text-green-700'}  `} />
+                            </button>
+                          </MenuHandler>
+                          <MenuList>
+                            <MenuItem onClick={() => {handleMarkAsDone(row)}}>Mark as completed</MenuItem>
+                          </MenuList>
+                        </Menu>
                       </td>
                     </tr>
                   );
                 }
               )}
+
+              {homerwoksInfo.length === 0 &&
+                 <tr>
+                    <td className=" text-center p-4" colSpan={5}>No Tasks yet</td>
+                 </tr>
+              }
             </tbody>
           </table>
         </CardBody>

@@ -72,21 +72,19 @@ class HomeworkController extends Controller
             $request->validate([
                 'titulo' => 'string|max:255',
                 'descripcion' => 'string|max:255',
-                // 'estado' => 'integer',
+                'estado' => 'integer',
                 'fecha_creacion' => 'date',
                 'fecha_vencimiento' => 'date',
-                // 'asignado_a' => 'integer',
-                // 'cod_etiquetas' => 'integer',
+                'etiquetas' => 'integer',
             ]);
 
             $homework->update([
                 'titulo' => $request->titulo,
                 'descripcion' => $request->descripcion,
-                // 'estado' => $request->estado,
+                'estado' => $request->estado,
                 'fecha_creacion' => $request->fecha_creacion,
                 'fecha_vencimiento' => $request->fecha_vencimiento,
-                // 'asignado_a' => $request->asignado_a,
-                // 'cod_etiquetas' => $request->cod_etiquetas,
+                'etiquetas' => $request->etiquetas,
             ]); 
 
             return response()->json([

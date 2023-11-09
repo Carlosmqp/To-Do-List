@@ -18,7 +18,7 @@ class Homework extends Model
         'fecha_creacion',
         'fecha_vencimiento',
         'asignado_a',
-        'cod_etiquetas',
+        'etiquetas',
     ];
 
     // -------------------------------------- RELATIONS MODELS --------------------------------------------//
