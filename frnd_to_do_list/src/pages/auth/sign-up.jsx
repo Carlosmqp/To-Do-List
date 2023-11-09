@@ -11,6 +11,7 @@ import {
   Checkbox,
   Button,
   Typography,
+  Textarea,
 } from "@material-tailwind/react";
 
 export function SignUp() {
@@ -23,6 +24,9 @@ export function SignUp() {
   const [nameField,setNameField] = useState('');
   const [emailField,setEmailField] = useState('');
   const [passwordField,setPasswordField] = useState('');
+  const [descriptionField,setDescriptionField] = useState('');
+  const [phoneField,setPhoneField] = useState('');
+  const [rowInfo, setRowInfo] = useState(null);
 
 
   const handleSignUp = async () => {
@@ -33,6 +37,8 @@ export function SignUp() {
       formData.append('name', nameField);
       formData.append('email', emailField);
       formData.append('password', passwordField);
+      formData.append('description', descriptionField);
+      formData.append('phone', phoneField);
 
 
 
@@ -110,6 +116,8 @@ export function SignUp() {
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
             <Input label="Name" size="lg" value={nameField} onChange={(event) => setNameField(event.target.value)}/>
+            <Textarea label="Description" size="lg" value={descriptionField} onChange={(event) => setDescriptionField(event.target.value)}></Textarea>
+            <Input label="Phone" size="lg" value={phoneField} onChange={(event) => setPhoneField(event.target.value)}/>
             <Input type="email" label="Email" size="lg" value={emailField} onChange={(event) => setEmailField(event.target.value)}/>
             <Input type="password" label="Password" size="lg" value={passwordField} onChange={(event) => setPasswordField(event.target.value)}/>
             <div className="-ml-2.5">

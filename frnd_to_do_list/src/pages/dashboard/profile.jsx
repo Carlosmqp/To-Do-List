@@ -23,6 +23,17 @@ import { ProfileInfoCard, MessageCard } from "@/widgets/cards";
 import { platformSettingsData, conversationsData, projectsData } from "@/data";
 
 export function Profile() {
+
+  // const [nameField,setNameField] = useState('');
+  // const [emailField,setEmailField] = useState('');
+  // const [descriptionField,setDescriptionField] = useState('');
+  // const [phoneField,setPhoneField] = useState('');
+
+  // let name = userInfo.name
+  // let description = userInfo.description
+  // let phone = userInfo.phone
+  // let email = userInfo.email
+
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url(https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80)] bg-cover	bg-center">
@@ -33,8 +44,8 @@ export function Profile() {
           <div className="mb-10 flex items-center justify-between gap-6">
             <div className="flex items-center gap-6">
               <Avatar
-                src="/img/bruce-mars.jpeg"
-                alt="bruce-mars"
+                src="/img/yo.jpeg"
+                alt=""
                 size="xl"
                 className="rounded-lg shadow-lg shadow-blue-gray-500/40"
               />
@@ -46,7 +57,7 @@ export function Profile() {
                   variant="small"
                   className="font-normal text-blue-gray-600"
                 >
-                  Studen
+                  Developer
                 </Typography>
               </div>
             </div>
@@ -99,12 +110,12 @@ export function Profile() {
             </div> */}
             <ProfileInfoCard
               title="Profile Information"
-              description="Hi, I'm Alec Thompson, Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
+              description="Soy un desarrollador y estudiante de software, con gran experiencia en desarrollo web y nuevas tegnologias como React y Laravel, tengo un gran conocimiento como analista de bases de datos, y gran experiencia en UI/UX."
               details={{
-                "first name": "Alec M. Thompson",
-                mobile: "(44) 123 1234 123",
-                email: "alecthompson@mail.com",
-                location: "USA",
+                "first name": "Obando",
+                mobile: "(+57) 321 758 7104",
+                email: "carlosm.q.p1@gmail.com",
+                location: "Colombia",
                 social: (
                   <div className="flex items-center gap-4">
                     <i className="fa-brands fa-facebook text-blue-700" />
