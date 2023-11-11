@@ -135,7 +135,7 @@ export function Configurator() {
         </div>
         <div className="mb-12">
 
-          <img src="/img/1.png" alt="" />
+          <img src="/img/logo_tdl.png" alt="" />
           {/* <hr />
           <div className="flex items-center justify-between py-5">
             <Typography variant="h6" color="blue-gray">

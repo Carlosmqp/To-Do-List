@@ -1,3 +1,5 @@
+import { API_URL } from "@/data/env";
+import { useState,useEffect } from "react";
 import {
   Card,
   CardBody,
@@ -24,15 +26,41 @@ import { platformSettingsData, conversationsData, projectsData } from "@/data";
 
 export function Profile() {
 
-  // const [nameField,setNameField] = useState('');
-  // const [emailField,setEmailField] = useState('');
-  // const [descriptionField,setDescriptionField] = useState('');
-  // const [phoneField,setPhoneField] = useState('');
+  // const handleWork = async () => {
 
-  // let name = userInfo.name
-  // let description = userInfo.description
-  // let phone = userInfo.phone
-  // let email = userInfo.email
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+        const response = await fetch(`${API_URL}/me`, {
+            method: 'GET',
+            // headers: {
+            //   'Content-Type': 'application/json',
+            //   'Accept': 'application/json',
+            //   // Puedes incluir cualquier encabezado adicional necesario, como tokens de autenticación
+            // },
+            // Incluye las credenciales si estás trabajando con un sistema de autenticación basado en cookies
+            credentials: 'include',
+          });
+  
+          const data = await response.json();
+  
+          if (response.status == 'success') {
+            setUserData(data.user);
+          } else {
+            // Maneja el caso en que la solicitud no fue exitosa
+            console.error('Error al obtener datos del usuario');
+          }
+        } catch (error) {
+          console.error('Error en la solicitud:', error);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+// }
 
   return (
     <>
@@ -72,10 +100,10 @@ export function Profile() {
                     <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
                     Message
                   </Tab> */}
-                  <Tab value="settings">
+                  {/* <Tab value="settings"onClick={() => { handleWork()}}>
                     <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                     Settings
-                  </Tab>
+                  </Tab> */}
                 </TabsHeader>
               </Tabs>
             </div>
@@ -126,7 +154,7 @@ export function Profile() {
               }}
               action={
                 <Tooltip content="Edit Profile">
-                  <PencilIcon className="h-4 w-4 cursor-pointer text-blue-gray-500" />
+                  <PencilIcon className="h-4 w-4 cursor-pointer text-white" />
                 </Tooltip>
               }
             />

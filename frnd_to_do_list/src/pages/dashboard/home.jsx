@@ -231,7 +231,7 @@ export function Home() {
                     <tr key={row.id}>
                       <td className={className}>
                         <div className="flex items-center gap-4">
-                          <Avatar src="/img/logo.png" size="sm" />
+                          <Avatar src="/img/logo_tdl.png" size="sm" />
                           <Typography
                             variant="small"
                             color="blue-gray"

@@ -66,10 +66,10 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'to_do_list'),
+            'port' => env('DB_PORT', '5433'),
+            'database' => env('DB_DATABASE', 'gestion_tareas'),
             'username' => env('DB_USERNAME', 'postgres'),
-            'password' => env('DB_PASSWORD', 'root'),
+            'password' => env('DB_PASSWORD', 'C88A99R00'),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
