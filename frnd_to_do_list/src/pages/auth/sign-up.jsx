@@ -98,12 +98,12 @@ export function SignUp() {
     <>
       
       <div className="absolute inset-0 z-0 h-full w-full bg-[#020617]" />
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 mb-20">
       <img
         src="../public/img/2.png"
         className="absolute inset-0 z-0 mt-28 ml-28 h-[500px] w-[500px] object-cover"
       />
-        <Card className="absolute ml-80 top-2/4 left-2/4 w-full max-w-[24rem] -translate-y-2/4 -translate-x-2/4">
+        <Card className="absolute ml-80 mt-10 top-2/4 left-2/4 w-full max-w-[24rem] -translate-y-2/4 -translate-x-2/4">
           
           <CardHeader
             variant="gradient"
@@ -120,9 +120,9 @@ export function SignUp() {
             <Input label="Phone" size="lg" value={phoneField} onChange={(event) => setPhoneField(event.target.value)}/>
             <Input type="email" label="Email" size="lg" value={emailField} onChange={(event) => setEmailField(event.target.value)}/>
             <Input type="password" label="Password" size="lg" value={passwordField} onChange={(event) => setPasswordField(event.target.value)}/>
-            <div className="-ml-2.5">
+            {/* <div className="-ml-2.5">
               <Checkbox label="I agree the Terms and Conditions" />
-            </div>
+            </div> */}
           </CardBody>
           <CardFooter className="pt-0">
             <Button 

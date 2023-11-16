@@ -88,7 +88,7 @@ export function SignIn() {
 
   return (
     <>
-      <div className="absolute inset-0 z-0 h-full w-full bg-[#020617]" />
+      <div className="absolute inset-0 z-0 h-[100%] w-full bg-[#020617]" />
       <div className="container mx-auto p-4">
         <img
           src="../public/img/1.png"
